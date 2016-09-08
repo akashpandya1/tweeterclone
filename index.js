@@ -71,12 +71,18 @@ function updateLorem(db, info, id) {
      return true; 
 }
 
-function insertRec(db) {
-    var stmt = db.prepare("INSERT INTO lorem VALUES (?)");
-    for (var i = 0; i < 10; i++) {
-        stmt.run("Ipsum " + i);
-    }
-    stmt.finalize();
+function insertRec(db, info) {
+    var stmt = db.prepare("INSERT INTO lorem VALUES (?)", function (err) {
+        if (err) {
+            console.log(err);
+            return false;
+        }
+        else {
+             stmt.run(info);
+             stmt.finalize();
+            console.log("Successful");
+        }
+    }); 
     db.close();
     return true; 
 }

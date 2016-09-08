@@ -35,11 +35,10 @@ app.listen(3000, function () {
     console.log('Example app listening on port 3000!');
 });
 
-if(!selectRec(db))  {
- initDB(db);
-}
 
-function initDB(db) {
+
+
+function initDB() {
     db.serialize(function () {
         db.run("CREATE TABLE lorem (info TEXT)", function (err, row) {
             if (err) {
@@ -53,11 +52,11 @@ function initDB(db) {
         stmt.finalize();
     });
     db.close();
-    return true; 
+    return true;
 }
 
 
-function updateLorem(db, info, id) {
+function updateLorem(info, id) {
     db.run("UPDATE tbl SET info = ? WHERE id = ?", info, id, function (err) {
         if (err) {
             console.log(err);
@@ -67,49 +66,75 @@ function updateLorem(db, info, id) {
             console.log("Successful");
         }
     });
-     db.close();
-     return true; 
+    db.close();
+    return true;
 }
 
-function insertRec(db, info) {
+function insertRec(info) {
     var stmt = db.prepare("INSERT INTO lorem VALUES (?)", function (err) {
         if (err) {
             console.log(err);
             return false;
         }
         else {
-             stmt.run(info);
-             stmt.finalize();
+            stmt.run(info);
+            stmt.finalize();
             console.log("Successful");
         }
-    }); 
+    });
     db.close();
-    return true; 
+    return true;
 }
 
-function deleteRec(db, idRec) {
+function deleteRec(idRec) {
     db.run("DELETE FROM lorem WHERE id=(?)", idRec, function (err) {
         if (err) {
             console.log(err);
-              return false;
+            return false;
         }
-        else {         
-            console.log("Successful");            
+        else {
+            console.log("Successful");
         }
     });
-     db.close();
-     return true; 
-} 
+    db.close();
+    return true;
+}
 
-function selectRec(db) {
+function selectRec() {
+    return new Promise(
+        (resolve, reject) => {
+            var rows;
             db.each("SELECT rowid AS id, info FROM lorem", function (err, row) {
                 if (err) {
                     console.log(err);
+                    reject(err);
                     return false;
-                } 
-                console.log(row.id + ": " + row.info);               
+                }
+                rows += row;
             });
-           db.close();
-           return true; 
- }
- 
+            console.log("after fetching data: " + rows);
+            resolve(rows);
+            db.close();
+
+        });
+}
+
+var p = selectRec();
+p.then(
+    (rows) => {
+         console.log("rows: " + rows);   
+       // var jsonObj;
+       //jsonObj += '{"id":"' + rows.id + '",';
+        //jsonObj += '"info":"' + rows.info + '"}';
+       // jsonObj +=  "]";
+         
+        return rows;
+    }
+).catch(
+    (err) => {
+        console.log(err);
+    }
+    );
+
+
+

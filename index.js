@@ -38,22 +38,22 @@ app.listen(3000, function () {
 
 
 
-function initDB() {
-    db.serialize(function () {
-        db.run("CREATE TABLE lorem (info TEXT)", function (err, row) {
-            if (err) {
-                console.log(err);
-            }
-        });
-        var stmt = db.prepare("INSERT INTO lorem VALUES (?)");
-        for (var i = 0; i < 10; i++) {
-            stmt.run("Ipsum " + i);
-        }
-        stmt.finalize();
-    });
-    db.close();
-    return true;
-}
+// function initDB() {
+//     db.serialize(function () {
+//         db.run("CREATE TABLE lorem (info TEXT)", function (err, row) {
+//             if (err) {
+//                 console.log(err);
+//             }
+//         });
+//         var stmt = db.prepare("INSERT INTO lorem VALUES (?)");
+//         for (var i = 0; i < 10; i++) {
+//             stmt.run("Ipsum " + i);
+//         }
+//         stmt.finalize();
+//     });
+//     db.close();
+//     return true;
+// }
 
 
 function updateLorem(info, id) {

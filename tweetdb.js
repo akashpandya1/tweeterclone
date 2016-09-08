@@ -7,7 +7,7 @@ var db = new sqlite3.Database('test.db');
 //var tempJsonObj = '[{"tweetText" : "first tweet", "authorID" : "1"}]';
 //insertTweet(tempJsonObj);
 //selectRec();
-updateTweetLikeUserIDs(3, 4);
+updateAnyColumnWithExistingData("retweeter_userid", 3, 4);
 
 function updateTweetwithColumn(column, id, data) {
     db.run("UPDATE tweet SET " + column + "  = ? WHERE tweetid = ?", data, id, function (err) {
@@ -23,35 +23,45 @@ function updateTweetwithColumn(column, id, data) {
 }
 
 
-function updateTweetLikeUserIDs(tweetid, userid) {
+function updateAnyColumnWithExistingData(columnName, tweetid, userid) {
     return new Promise(
         (resolve, reject) => {
-            db.each("SELECT userlikeids FROM tweet where tweetid = ?", tweetid, function (err, row) {
+            db.each("SELECT " + columnName + " FROM tweet where tweetid = ?", tweetid, function (err, row) {
                 if (err) {
                     console.log(err);
                     reject(err);
                     return false;
                 }
                 resolve(row)
-                console.log("row:" + row.userlikeids);
+                console.log("row:" + row[columnName]);
             })
         }).then(
         (row) => {
-            console.log("updateTweetLikeUserIDs within then: " + row.userlikeids);
-             var finalUserLikeids = row.userlikeids + "," + userid;
-            console.log("updateTweetLikeUserIDs after adding new user : " + finalUserLikeids);
-            db.run("UPDATE tweet SET userlikeids= ? WHERE tweetid = ?", finalUserLikeids, tweetid, function (err) {
+            console.log("updateAnyColumnWithExistingData within then: " + row[columnName]);
+             var finalUserids = row[columnName] + "," + userid;
+            console.log("updateAnyColumnWithExistingData after adding new user : " + finalUserids);
+            db.run("UPDATE tweet SET " + columnName + " = ? WHERE tweetid = ?", finalUserids, tweetid, function (err) {
                 if (err) {
                     console.log(err);
                     return false;
                 }
                 else {
-                    console.log("Successful");
+                    console.log("Successful Update userlikeids.");
                 }
             });
+            if (columnName == "retweeter_userid") {
+            db.run("UPDATE tweet SET retweet= ? WHERE tweetid = ?", true,tweetid, function (err) {
+                if (err) {
+                    console.log(err);
+                    return false;
+                }
+                else {
+                    console.log("Successful update retweet.");
+                }
+            });
+            } 
             return true;
-        }
-        ).catch(
+        }).catch(
         (err) => {
             console.log(err);
         });

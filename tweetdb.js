@@ -132,6 +132,7 @@ function selectRec() {
 
 exports.updateAnyColumnWithExistingData = updateAnyColumnWithExistingData;
 exports.selectRec = selectRec;
+exports.insertTweet = insertTweet;
 
 
 

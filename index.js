@@ -100,35 +100,34 @@ function deleteRec(idRec) {
     return true;
 }
 
-function selectRec() {
+function selectRec() {    
     return new Promise(
-        (resolve, reject) => {
-            var rows;
-            db.each("SELECT rowid AS id, info FROM lorem", function (err, row) {
-                if (err) {
-                    console.log(err);
-                    reject(err);
-                    return false;
+        (resolve, reject) => {      
+            var rows = [];     
+            db.each("SELECT rowid AS id, info FROM lorem", 
+                function (err, row) {
+                    if (err) {
+                        console.log(err);
+                        reject(err);
+                        return false;
+                    }
+                    rows.push(row);                    
+                },
+                function (err, nRows) {
+                    resolve(rows);
                 }
-                rows += row;
-            });
-            console.log("after fetching data: " + rows);
-            resolve(rows);
-            db.close();
-
+            
+            );           
         });
 }
 
 var p = selectRec();
 p.then(
     (rows) => {
-         console.log("rows: " + rows);   
-       // var jsonObj;
-       //jsonObj += '{"id":"' + rows.id + '",';
-        //jsonObj += '"info":"' + rows.info + '"}';
-       // jsonObj +=  "]";
-         
-        return rows;
+         console.log("return rows: " + rows);
+         var jsonrows= JSON.stringify(rows);
+         console.log("retun json: " + jsonrows);  
+         return rows;
     }
 ).catch(
     (err) => {

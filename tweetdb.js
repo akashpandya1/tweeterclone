@@ -7,7 +7,9 @@ var db = new sqlite3.Database('test.db');
 //var tempJsonObj = '[{"tweetText" : "first tweet", "authorID" : "1"}]';
 //insertTweet(tempJsonObj);
 //selectRec();
-updateAnyColumnWithExistingData("retweeter_userid", 3, 4);
+//updateAnyColumnWithExistingData("retweeter_userid", 3, 4);
+//updateAnyColumnWithExistingData("retweeter_userid", 4, 1);
+//updateAnyColumnWithExistingData("userlikeids", 5, 1);
 
 function updateTweetwithColumn(column, id, data) {
     db.run("UPDATE tweet SET " + column + "  = ? WHERE tweetid = ?", data, id, function (err) {
@@ -36,9 +38,9 @@ function updateAnyColumnWithExistingData(columnName, tweetid, userid) {
                 console.log("row:" + row[columnName]);
             })
         }).then(
-        (row) => {
+        (row) => {        
             console.log("updateAnyColumnWithExistingData within then: " + row[columnName]);
-             var finalUserids = row[columnName] + "," + userid;
+             var finalUserids = row[columnName] != null && row[columnName] != "" ? row[columnName] + "," + userid : userid;
             console.log("updateAnyColumnWithExistingData after adding new user : " + finalUserids);
             db.run("UPDATE tweet SET " + columnName + " = ? WHERE tweetid = ?", finalUserids, tweetid, function (err) {
                 if (err) {
@@ -128,6 +130,8 @@ function selectRec() {
         });
 }
 
+exports.updateAnyColumnWithExistingData = updateAnyColumnWithExistingData;
+exports.selectRec = selectRec;
 
 
 

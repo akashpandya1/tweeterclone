@@ -10,6 +10,8 @@ var db = new sqlite3.Database('test.db');
 //updateAnyColumnWithExistingData("retweeter_userid", 3, 4);
 //updateAnyColumnWithExistingData("retweeter_userid", 4, 1);
 //updateAnyColumnWithExistingData("userlikeids", 5, 1);
+//selectRecForTweet(5);
+deleteRec(7);
 
 function updateTweetwithColumn(column, id, data) {
     db.run("UPDATE tweet SET " + column + "  = ? WHERE tweetid = ?", data, id, function (err) {
@@ -87,7 +89,7 @@ function insertTweet(data) {
 }
 
 function deleteRec(idRec) {
-    db.run("DELETE FROM tweet WHERE id=(?)", idRec, function (err) {
+    db.run("DELETE FROM tweet WHERE tweetID=(?)", idRec, function (err) {
         if (err) {
             console.log(err);
             return false;
@@ -122,7 +124,32 @@ function selectRec() {
             console.log("tweet return rows: " + rows);
             var jsonrows = JSON.stringify(rows);
             console.log("tweet retun json: " + jsonrows);
-            return rows;
+            return jsonrows;
+        }
+        ).catch(
+        (err) => {
+            console.log(err);
+        });
+}
+
+function selectRecForTweet(idRec) {
+    return new Promise(
+        (resolve, reject) => {           
+            db.all("SELECT * FROM tweet where tweetID = ?", idRec,
+                function (err, row) {
+                    if (err) {
+                        console.log(err);
+                        reject(err);
+                        return false;
+                    }
+                    resolve(row);
+                });
+        }).then(
+        (row) => {
+            console.log("tweet return rows: " + row);
+            var jsonrow = JSON.stringify(row);
+            console.log("tweet retun json: " + jsonrow);
+            return jsonrow;
         }
         ).catch(
         (err) => {
@@ -133,6 +160,6 @@ function selectRec() {
 exports.updateAnyColumnWithExistingData = updateAnyColumnWithExistingData;
 exports.selectRec = selectRec;
 exports.insertTweet = insertTweet;
-
+exports.deleteRec = deleteRec;
 
 

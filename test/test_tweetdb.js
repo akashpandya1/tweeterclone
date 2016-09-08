@@ -7,7 +7,7 @@ chai.use(chaiAsPromised);
 chai.should();
 
 
-describe('update AnyColumn With Existing Data', function () {
+describe('::TweetDB Test::', function () {
     it('for insert tweet', function () {
         var tempJsonObj = '[{"tweetText" : "second tweet", "authorID" : "2"}]';
         var st = main.insertTweet(tempJsonObj);
@@ -38,4 +38,14 @@ describe('update AnyColumn With Existing Data', function () {
     });
 
 
+     it('select all from tweet', function () {
+        var st = main.selectRec();         
+        return st.should.eventually.equal().tempJsonObj;
+    });
+
+    it('delete from tweet', function () {
+        var st = main.deleteRec(7);         
+        assert.equal(st, true);
+    });
+    
 });

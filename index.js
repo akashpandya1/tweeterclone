@@ -21,7 +21,7 @@ server.listen(PORT, function () {
 var express = require('express');
 var app = express();
 var sqlite3 = require('sqlite3').verbose();
-var db = new sqlite3.Database('test.db');
+var db =  new sqlite3.Database('test.db');
 
 app.get('/', function (req, res) {
     res.send('Hello World!');

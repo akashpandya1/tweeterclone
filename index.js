@@ -35,29 +35,75 @@ app.listen(3000, function () {
     console.log('Example app listening on port 3000!');
 });
 
-
-initDB(db);
+if(!selectRec(db))  {
+ initDB(db);
+}
 
 function initDB(db) {
-    db.serialize(function() {
-        db.run("CREATE TABLE lorem (info TEXT)" , function (err, row) {
-          if (err) {
+    db.serialize(function () {
+        db.run("CREATE TABLE lorem (info TEXT)", function (err, row) {
+            if (err) {
                 console.log(err);
             }
-          });
+        });
         var stmt = db.prepare("INSERT INTO lorem VALUES (?)");
         for (var i = 0; i < 10; i++) {
             stmt.run("Ipsum " + i);
         }
         stmt.finalize();
-
-        db.each("SELECT rowid AS id, info FROM lorem", function (err, row) {
-            if (err) {
-                console.log(err);
-            }
-            console.log(row.id + ": " + row.info);
-        });
     });
+    db.close();
+    return true; 
 }
 
-db.close();
+
+function updateLorem(db, info, id) {
+    db.run("UPDATE tbl SET info = ? WHERE id = ?", info, id, function (err) {
+        if (err) {
+            console.log(err);
+            return false;
+        }
+        else {
+            console.log("Successful");
+        }
+    });
+     db.close();
+     return true; 
+}
+
+function insertRec(db) {
+    var stmt = db.prepare("INSERT INTO lorem VALUES (?)");
+    for (var i = 0; i < 10; i++) {
+        stmt.run("Ipsum " + i);
+    }
+    stmt.finalize();
+    db.close();
+    return true; 
+}
+
+function deleteRec(db, idRec) {
+    db.run("DELETE FROM lorem WHERE id=(?)", idRec, function (err) {
+        if (err) {
+            console.log(err);
+              return false;
+        }
+        else {         
+            console.log("Successful");            
+        }
+    });
+     db.close();
+     return true; 
+} 
+
+function selectRec(db) {
+            db.each("SELECT rowid AS id, info FROM lorem", function (err, row) {
+                if (err) {
+                    console.log(err);
+                    return false;
+                } 
+                console.log(row.id + ": " + row.info);               
+            });
+           db.close();
+           return true; 
+ }
+ 

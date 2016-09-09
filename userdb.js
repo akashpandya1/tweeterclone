@@ -3,10 +3,14 @@ var db = new sqlite3.Database('test.db');
 
 
 var testUser = '[{"UserName" : "Mike", "UserProfile" : "efwiofhweiofhw vv"}]';
+var testUser2 = '[{"UserName" : "Test", "UserProfile" : "efwiofefewfwefwefwefwfe vv"}]';
 //updateUser(testUser);
 //addUser(testUser);
+//addUser(testUser2);
 //updateFollowing(1, 2);
-getFollowUsers(1);
+//getFollowUsers(1);
+getUserNameByID(2);
+getUserIDByName("Mike");
 
 
 function addUser(data) {
@@ -38,6 +42,66 @@ function updateUser(data) {
     });
     return true;
 }
+
+function getUserNameByID(userID) {
+    var userName;
+    return new Promise(
+        (resolve, reject) => {
+            db.each("SELECT UserName FROM User where UserID = ?", userID,
+                function (err, row) {
+                    if (err) {
+                        console.log(err);
+                        reject(err);
+                        return false;
+                    }
+                    userName = row;
+                },
+                function (err, row) {
+                    resolve(row);
+                }
+
+            );
+        }).then(
+        (rows) => {
+            console.log("userName: " + JSON.stringify(userName));
+            return JSON.stringify(userName);
+        }
+        ).catch(
+        (err) => {
+            console.log(err);
+        });
+}
+
+function getUserIDByName(userName) {
+    var userID;
+    return new Promise(
+        (resolve, reject) => {
+            db.each("SELECT UserID FROM User where UserName = ?", userName,
+                function (err, row) {
+                    if (err) {
+                        console.log(err);
+                        reject(err);
+                        return false;
+                    }
+                    userID = row;
+                },
+                function (err, row) {
+                    resolve(row);
+                }
+
+            );
+        }).then(
+        (rows) => {
+            console.log("userID: " + JSON.stringify(userID));
+            return JSON.stringify(userID);
+        }
+        ).catch(
+        (err) => {
+            console.log(err);
+        });
+}
+
+
 
 function updateFollowing(UserID, UserToFollow) {
     return new Promise(

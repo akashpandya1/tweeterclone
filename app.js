@@ -7,10 +7,12 @@ var express = require('express'),
     createtweet = fs.readFileSync('./createtweet.html'),
     dbInsertTweet = require('./tweetdb.js').insertTweet,
     dbDeleteTweet = require('./tweetdb.js').deleteRec,
-    dbSelectTweets = require('./tweetdb.js').selectRecForTweet,  
-    bodyParser = require('body-parser'),
-    user;
-  
+    dbSelectRecForTweet = require('./tweetdb.js').selectRecForTweet,  
+    dbAllTweets = require('./tweetdb.js').selectRec
+    bodyParser = require('body-parser');
+    ejs = require('ejs');
+    os = require('os');
+
     app.use(bodyParser.json());
     app.use(bodyParser.urlencoded({
     extended: true
@@ -18,27 +20,34 @@ var express = require('express'),
     
 app.post('/tweet', function(req, res) {    
     console.log("tweet");
-    user.userid = req.body.userid;
-     console.log("tweet userid:" + user.userid);      
-     res.render('createtweet');     
+     var user = {
+        userid: req.body.userid,
+     }       
+     console.log("tweet userid:" + user.userid);   
+     fs.readFile('createtweet.html', 'utf-8', function(err, content) {
+         if (err) {
+             res.end('error occurred');
+             return;
+         } 
+
+     var renderedHtml = ejs.render(content, {userid: user.userid});  
+     console.log("renderedHtml:" + renderedHtml);  
+     res.end(renderedHtml);  
+   });  
 });
 
 app.post('/createtweet', function(req, res) {
     console.log("createtweet");
      
-     user.tweettext = req.body.tweettext;
-
-    console.log("createtweet:" + user.userid + "," + user.tweettext);    
-
-    var p = insertTweet(createTweet);
-    p.then(
-        (val) => {
-            res.send('Tweeted!');
-        }
-    ).catch(
-        (err) => {
-            res.send(err);
-        });        
+     var createTweet = {
+         tweetText: req.body.tweettext,
+         authorID: req.body.userid        
+     };
+    console.log("createtweet:" + createTweet.userid + "," + createTweet.tweettext);    
+    jSONStr = '[' + JSON.stringify(createTweet) + ']';    
+    console.log("jSONStr: " + jSONStr);
+    dbInsertTweet(jSONStr);
+    res.send('Tweeted!');        
 });
 
 app.post('/deletetweet', function(req, res) {
@@ -50,7 +59,7 @@ app.post('/deletetweet', function(req, res) {
 
     console.log("tweetid:" + deleteTweet.tweetid);    
 
-    var p = deleteRec(deleteTweet.tweetid);
+    var p = dbDeleteTweet(deleteTweet.tweetid);
     p.then(
         (val) => {
             res.send('Deleted!');
@@ -64,7 +73,7 @@ app.post('/deletetweet', function(req, res) {
 
 app.post('/selecttweet', function(req, res) {
     console.log("selecttweet");
-    var p = selectRec();
+    var p = dbAllTweets();
     p.then(
         (val) => {
             res.send('selected all tweets!');
@@ -83,7 +92,7 @@ app.post('/selectRecForTweet', function(req, res) {
      var selectTweetRec = {
         tweetid: req.body.tweetid        
      }; 
-    var p = selectRecForTweet(selectTweetRec.tweetid);
+    var p = dbSelectRecForTweet(selectTweetRec.tweetid);
     p.then(
         (val) => {
             res.send('selected tweet record!');

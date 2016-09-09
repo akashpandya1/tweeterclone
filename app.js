@@ -8,7 +8,8 @@ var express = require('express'),
     dbInsertTweet = require('./tweetdb.js').insertTweet,
     dbDeleteTweet = require('./tweetdb.js').deleteRec,
     dbSelectTweets = require('./tweetdb.js').selectRecForTweet,  
-    bodyParser = require('body-parser');
+    bodyParser = require('body-parser'),
+    user;
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
@@ -18,7 +19,7 @@ app.use(bodyParser.urlencoded({
 
 app.post('/tweet', function(req, res) {    
     console.log("tweet");
-     var user = {
+     user = {
         userid: req.body.userid,
      }       
      console.log("tweet userid:" + user.userid);  
@@ -31,11 +32,10 @@ app.post('/tweet', function(req, res) {
 app.post('/createtweet', function(req, res) {
     console.log("createtweet");
      
-     var createTweet = {
-        userid: req.header.userid,
-        tweettext: req.body.tweettext,
-     } 
-      console.log("createtweet:" + createTweet.userid + "," + createTweet.tweettext);       
+     user.tweettext = req.body.tweettext;
+
+     dbInsertTweet(user,)
+      console.log("createtweet:" + user.userid + "," + user.tweettext);       
 });
 
 

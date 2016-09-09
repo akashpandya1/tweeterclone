@@ -5,7 +5,9 @@ var db = new sqlite3.Database('test.db');
 var testUser = '[{"UserName" : "Mike", "UserProfile" : "efwiofhweiofhw vv"}]';
 //updateUser(testUser);
 //addUser(testUser);
-updateFollowing(1, 2);
+//updateFollowing(1, 2);
+getFollowUsers(1);
+
 
 function addUser(data) {
     var stmt = db.prepare("INSERT INTO User (UserName, UserProfile) VALUES (?, ?)", function (err) {
@@ -62,6 +64,39 @@ function updateFollowing(UserID, UserToFollow) {
                 }
             });
             return true;
+        }
+        ).catch(
+        (err) => {
+            console.log(err);
+        });
+}
+
+function getFollowUsers(UserID) {
+    return new Promise(
+        (resolve, reject) => {
+            db.each("SELECT UserFollowing FROM User WHERE UserID = ?", UserID, function (err, row) {
+                if (err) {
+                    console.log(err);
+                    reject(err);
+                    return false;
+                }
+                resolve(row)
+            })
+        }).then(
+        (row) => {
+            console.log(row.UserFollowing);
+            db.run("SELECT UserName FROM User WHERE UserID IN ", row.UserFollowing, function (err, row) {
+                if (err) {
+                    console.log(err);
+                    reject(err);
+                    return false;
+                }
+                resolve(row)
+            }).then(
+                (row) => {
+                    console.log(row.UserID);
+                }
+            )
         }
         ).catch(
         (err) => {

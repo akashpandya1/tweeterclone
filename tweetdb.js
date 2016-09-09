@@ -1,6 +1,4 @@
 
-var express = require('express');
-var app = express();
 var sqlite3 = require('sqlite3').verbose();
 var db = new sqlite3.Database('test.db');
 
@@ -11,7 +9,7 @@ var db = new sqlite3.Database('test.db');
 //updateAnyColumnWithExistingData("retweeter_userid", 4, 1);
 //updateAnyColumnWithExistingData("userlikeids", 5, 1);
 //selectRecForTweet(5);
-deleteRec(7);
+//deleteRec(7);
 
 function updateTweetwithColumn(column, id, data) {
     db.run("UPDATE tweet SET " + column + "  = ? WHERE tweetid = ?", data, id, function (err) {
@@ -21,9 +19,11 @@ function updateTweetwithColumn(column, id, data) {
         }
         else {
             console.log("Successful");
+            return true;
+            
         }
     });
-    return true;
+    
 }
 
 
@@ -161,5 +161,73 @@ exports.updateAnyColumnWithExistingData = updateAnyColumnWithExistingData;
 exports.selectRec = selectRec;
 exports.insertTweet = insertTweet;
 exports.deleteRec = deleteRec;
+
+
+/*
+
+TransactionDatabase = require("sqlite3-transactions").TransactionDatabase;
+var db = new TransactionDatabase(
+    new sqlite3.Database("test.sqlite", sqlite3.OPEN_READWRITE | sqlite3.OPEN_CREATE)
+);
+
+function updateAnyColumnWithExistingData(columnName, tweetid, userid) {
+    var p;
+    db.beginTransaction(function (err, transaction) {
+        p = new Promise((resolve, reject) => {
+            transaction.each("SELECT " + columnName + " FROM tweet where tweetid = ?", tweetid, function (err, row) {
+                if (err) {
+                    console.log(err);
+                    reject(err);
+                }
+                resolve(row)
+                console.log("row:" + row[columnName]);
+            })
+        }).then(
+            (row) => {
+                return updateUserLikeIds(transaction, columnName, tweeetid, userid);
+            }
+        ).then(
+            (val) => {
+                if (columnName == "retweeter_userid") {
+                    return updateRetweetBool(transaction, tweetid);
+                }
+            }
+        ).then(
+            (val) => {
+                transaction.commit(function (err) {
+                    console.log('failed to commit');
+                });
+            }
+        ).catch(
+            (err) => {
+                console.log(err);
+                transaction.rollback();
+            }
+        );
+    });
+    return p;
+
+}
+
+
+function updateUserLikeIds(db, columnName, tweetid, userid) {
+    return Promise(function (resolve, reject) {
+        console.log("updateAnyColumnWithExistingData within then: " + row[columnName]);
+        var finalUserids = row[columnName] != null && row[columnName] != "" ? row[columnName] + "," + userid : userid;
+        console.log("updateAnyColumnWithExistingData after adding new user : " + finalUserids);
+        db.run("UPDATE tweet SET " + columnName + " = ? WHERE tweetid = ?", finalUserids, tweetid, function (err) {
+            if (err) {
+                console.log(err);
+                reject(err);
+            }
+            else {
+                console.log("Successful Update userlikeids.");
+                resolve();
+            }
+        });
+    });
+}
+
+*/
 
 

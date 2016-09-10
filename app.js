@@ -1,14 +1,14 @@
 var express = require('express'),
-    app = express(),
-    sqlite3 = require('sqlite3').verbose(),
-    db = new sqlite3.Database('test.db'),
-    fs = require('fs'),
-    html = fs.readFileSync('./tweet.html'),
-    createtweet = fs.readFileSync('./createtweet.html'),
-    dbInsertTweet = require('./tweetdb.js').insertTweet,
-    dbDeleteTweet = require('./tweetdb.js').deleteRec,
-    dbSelectRecForTweet = require('./tweetdb.js').selectRecForTweet,
-    dbAllTweets = require('./tweetdb.js').selectRec
+app = express(),
+sqlite3 = require('sqlite3').verbose(),
+db = new sqlite3.Database('test.db'),
+fs = require('fs'),
+html = fs.readFileSync('./tweet.html'),
+createtweet = fs.readFileSync('./createtweet.html'),
+dbInsertTweet = require('./tweetdb.js').insertTweet,
+dbDeleteTweet = require('./tweetdb.js').deleteRec,
+dbSelectRecForTweet = require('./tweetdb.js').selectRecForTweet,
+dbAllTweets = require('./tweetdb.js').selectRec
 bodyParser = require('body-parser');
 ejs = require('ejs');
 os = require('os');
@@ -84,6 +84,23 @@ app.post('/selecttweet', function (req, res) {
         });
 });
 
+
+app.post('/tweetLike', function (req, res) {
+    console.log("tweetLike");
+    var tweetLikeRec = {
+        tweetid: req.body.tweetid,
+        userid: req.body.userid
+    };
+    var p = updateAnyColumnWithExistingData('retweeter_userid', tweetLikeRec.tweetid, tweetLikeRec.userid);
+    p.then(
+        (val) => {
+            res.send(true);
+        }
+    ).catch(
+        (err) => {
+            res.send(err);
+        });
+});
 
 
 app.post('/selectRecForTweet', function (req, res) {

@@ -10,7 +10,7 @@ var db = new TransactionDatabase(
 //selectRec();
 //updateAnyColumnWithExistingData("retweeter_userid", 3, 'user2');
 //updateAnyColumnWithExistingData("retweeter_userid", 4, 'user2');
-updateAnyColumnWithExistingData("userlikeids", 5, 'user2');
+//updateAnyColumnWithExistingData("userlikeids", 5, 'user2');
 //selectRecForTweet(5);
 //deleteRec(7);
 

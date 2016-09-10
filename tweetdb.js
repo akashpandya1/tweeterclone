@@ -10,7 +10,7 @@ var db = new TransactionDatabase(
 //selectRec();
 //updateAnyColumnWithExistingData("retweeter_userid", 3, 'user2');
 //updateAnyColumnWithExistingData("retweeter_userid", 4, 'user2');
-//updateAnyColumnWithExistingData("userlikeids", 5, 'user2');
+updateAnyColumnWithExistingData("userlikeids", 5, 'user2');
 //selectRecForTweet(5);
 //deleteRec(7);
 
@@ -135,26 +135,26 @@ function updateAnyColumnWithExistingData(columnName, tweetid, userid) {
             })
         }).then(
             (row) => {
+                return updateUserIds(transaction, columnName, row[columnName], tweetid, userid);
+            }
+            ).then(
+            (row) => {
                 if (columnName == "retweeter_userid") {
-                    return updateUserIds(transaction, columnName, row[columnName], tweetid, userid);
+                    return updateRetweetBool(transaction, tweetid);
                 }
             }
-        ).then(
-            (row) => {
-                return updateRetweetBool(transaction, tweetid);
-            }
-        ).then(
+            ).then(
             (val) => {
                 transaction.commit(function (err) {
                     console.log("Commit Successful!");
                 });
             }
-        ).catch(
+            ).catch(
             (err) => {
                 console.log("Rollback: " + err);
                 transaction.rollback();
             }
-        );
+            );
     });
     return p;
 
@@ -162,10 +162,10 @@ function updateAnyColumnWithExistingData(columnName, tweetid, userid) {
 
 
 function updateUserIds(db, columnName, existingUsers, tweetid, userid) {
-    console.log("updateUserIds: " + columnName + "::" +  existingUsers + "::" + tweetid + "::" + userid);
+    console.log("updateUserIds: " + columnName + "::" + existingUsers + "::" + tweetid + "::" + userid);
     return new Promise(
         (resolve, reject) => {
-            console.log("updateUserIds: " +existingUsers);
+            console.log("updateUserIds: " + existingUsers);
             var finalUserids = existingUsers != null && existingUsers != "" ? existingUsers + ":" + userid : userid;
             console.log("updateUserIds after adding new user : " + finalUserids);
             db.run("UPDATE tweet SET " + columnName + " = ? WHERE tweetid = ?", finalUserids, tweetid, function (err) {

@@ -9,8 +9,8 @@ var testUser2 = '[{"UserName" : "Test", "UserProfile" : "efwiofefewfwefwefwefwfe
 //addUser(testUser2);
 //updateFollowing(1, 2);
 //getFollowUsers(1);
-getUserNameByID(2);
-getUserIDByName("Mike");
+//getUserNameByID(7);
+//getUserIDByName("Mike");
 
 
 function addUser(data) {
@@ -167,3 +167,7 @@ function getFollowUsers(UserID) {
             console.log(err);
         });
 }
+
+
+exports.addUser = addUser;
+exports.getUserIDByName = getUserIDByName;

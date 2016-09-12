@@ -5,10 +5,13 @@ var express = require('express'),
     fs = require('fs'),
     html = fs.readFileSync('./tweet.html'),
     createtweet = fs.readFileSync('./createtweet.html'),
+    addUser = fs.readFile('./user.html'),
     dbInsertTweet = require('./tweetdb.js').insertTweet,
     dbDeleteTweet = require('./tweetdb.js').deleteRec,
     dbSelectRecForTweet = require('./tweetdb.js').selectRecForTweet,  
-    dbAllTweets = require('./tweetdb.js').selectRec
+    dbAllTweets = require('./tweetdb.js').selectRec,
+    dbAddUser = require('./userdb.js').addUser,
+    dbGetUserIDByName = require('./userdb.js').getUserIDByName,
     bodyParser = require('body-parser');
     ejs = require('ejs');
     os = require('os');
@@ -36,12 +39,44 @@ app.post('/tweet', function(req, res) {
    });  
 });
 
+app.post('/user', function(req, res) {    
+    console.log("user");
+     var user = {
+        userid: req.body.userid,
+     }       
+     console.log("user userid:" + user.userid);   
+     fs.readFile('user.html', 'utf-8', function(err, content) {
+         if (err) {
+             res.end('error occurred');
+             return;
+         } 
+
+     var renderedHtml = ejs.render(content, {userid: user.userid});  
+     console.log("renderedHtml:" + renderedHtml);  
+     res.end(renderedHtml);  
+   });  
+});
+
+app.post('/addUser', function(req, res) {
+    console.log("adding user");
+     
+     var newUser = {
+         UserName: req.body.userName,
+         UserProfile: req.body.userProfile        
+     };
+    jSONStr = '[' + JSON.stringify(newUser) + ']';    
+    console.log("jSONStr: " + jSONStr);
+    dbAddUser(jSONStr);
+    res.send('user added');        
+});
+
+
 app.post('/createtweet', function(req, res) {
     console.log("createtweet");
      
      var createTweet = {
          tweetText: req.body.tweettext,
-         authorID: req.body.userid        
+         authorID: dbGetUserIDByName(req.body.userid)  
      };
     console.log("createtweet:" + createTweet.userid + "," + createTweet.tweettext);    
     jSONStr = '[' + JSON.stringify(createTweet) + ']';    

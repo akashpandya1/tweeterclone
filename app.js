@@ -51,8 +51,7 @@ app.post('/user', function(req, res) {
              return;
          } 
 
-     var renderedHtml = ejs.render(content, {userid: user.userid});  
-     console.log("renderedHtml:" + renderedHtml);  
+     var renderedHtml = ejs.render(content, {userid: user.userid});
      res.end(renderedHtml);  
    });  
 });
@@ -64,8 +63,7 @@ app.post('/addUser', function(req, res) {
          UserName: req.body.userName,
          UserProfile: req.body.userProfile        
      };
-    jSONStr = '[' + JSON.stringify(newUser) + ']';    
-    console.log("jSONStr: " + jSONStr);
+    jSONStr = '[' + JSON.stringify(newUser) + ']'; 
     dbAddUser(jSONStr);
     res.send('user added');        
 });

@@ -72,18 +72,19 @@ function getUserNameByID(userID) {
         });
 }
 
+exports.getUserIDByName = getUserIDByName;
 function getUserIDByName(userName) {
     var userID;
     return new Promise(
         (resolve, reject) => {
-            db.each("SELECT UserID FROM User where UserName = ?", userName,
+            db.all("SELECT UserID FROM User where UserName = ?", userName,
                 function (err, row) {
                     if (err) {
                         console.log(err);
                         reject(err);
                         return false;
                     }
-                    userID = row;
+                    
                 },
                 function (err, row) {
                     resolve(row);
@@ -92,8 +93,9 @@ function getUserIDByName(userName) {
             );
         }).then(
         (rows) => {
-            console.log("userID: " + JSON.stringify(userID));
-            return JSON.stringify(userID);
+            userID = JSON.parse(JSON.stringify(rows));
+            console.log(userID[0].UserID);
+            return userID[0].UserID;
         }
         ).catch(
         (err) => {
@@ -101,6 +103,7 @@ function getUserIDByName(userName) {
         });
 }
 
+ 
 
 
 function updateFollowing(UserID, UserToFollow) {

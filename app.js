@@ -102,15 +102,27 @@ app.post('/addUser', function(req, res) {
 app.post('/createtweet', function (req, res) {
     console.log("createtweet");
 
-    var createTweet = {
+    return new Promise(
+        (resolve, reject) => {
+                var id = dbGetUserIDByName(req.body.userid);
+                resolve(id);
+            ;
+        }).then(
+        (id) => {
+            var createTweet = {
         tweetText: req.body.tweettext,
-        authorID: req.body.userid
+        authorID: id,
     };
     console.log("createtweet:" + createTweet.userid + "," + createTweet.tweettext);
     jSONStr = '[' + JSON.stringify(createTweet) + ']';
     console.log("jSONStr: " + jSONStr);
     dbInsertTweet(jSONStr);
     res.send('Tweeted!');
+        }
+        ).catch(
+        (err) => {
+            console.log(err);
+        });  
 });
 
 app.post('/deletetweet', function (req, res) {

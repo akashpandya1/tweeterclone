@@ -96,7 +96,7 @@ exports.selectUserFeeds =selectUserFeeds;
 function selectUserFeeds(userId) {
     return new Promise(
         (resolve, reject) => {          
-            db.all("SELECT t.tweettext, t.authorID, t.lastupdated, u.username FROM tweet as t, user as u where u.userID = t.authorID and authorID in ( select userfollowing from userfollow where userid = ? )", userId,
+            db.all("SELECT t.tweetID, t.tweettext, t.authorID, t.lastupdated, u.username FROM tweet as t, user as u where u.userID = t.authorID and authorID in ( select userfollowing from userfollow where userid = ? )", userId,
                 function (err, rows) {
                     if (err) {
                         console.log(err);

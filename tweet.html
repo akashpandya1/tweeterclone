@@ -21,7 +21,7 @@
 <br/>   
 </div>
  
-<div id="feeds" style="display:none;"><b>Userfeeds:</b><br/></div>
+<div id="feeds" style="display:none;"><h3>Userfeeds:</h3><br/></div>
 
 <script>
  var userInfo;
@@ -67,7 +67,9 @@ function getUserFeeds(userId) {
 	 for (var i = 0; i < obj.length; i++) { 		  
 			// console.log(i + " -> " + obj[i]['tweetText']);	
 			var cp =  document.createElement('span');
-            cp.innerHTML = '<a href="http://localhost:8080/getUserFeeds/" + userId + "/">' +  obj[i]['UserName'] + '</a>' + '&nbsp;&nbsp;&nbsp;' + obj[i]['lastupdated'] + '<br/>' + obj[i]['tweetText'] + '<br/><br/>';
+            cp.innerHTML = '<a href="http://localhost:8080/getUserFeeds/" + userId + "/">' +  obj[i]['UserName'] + '</a>' + 
+            '&nbsp;&nbsp;&nbsp;' + obj[i]['lastupdated'] + '<br/>' + obj[i]['tweetText'] + '<br/>' +
+            '<a href="http://localhost:8080/getReplies/"' + obj[i]['tweetID'] + '"/">Replies</a>' + '<br/><br/>';
  			document.getElementById("feeds").appendChild(cp);		
 	  } 
 	}

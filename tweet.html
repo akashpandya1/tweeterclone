@@ -25,7 +25,6 @@
 
 <script>
  var userInfo;
-
  function handleUser(evt) {   
         console.log('handleUser');
         evt.preventDefault();           
@@ -35,8 +34,6 @@
         document.getElementById("feeds").style.display = '';
         getUserFeeds(userInfo);
  };
-
-
  function callAjax(inputData) {
     
         //alert('callAjax inputData: ' + inputData);
@@ -53,7 +50,6 @@
         document.getElementById("testDemo").innerHTML = "waiting for response..."; 
   
     }      
-
 function getUserFeeds(userId) {
   var xhttp = new XMLHttpRequest(userId);
   var feedUrl= "http://localhost:8080/getUserFeeds/" + userId + "/";
@@ -63,24 +59,62 @@ function getUserFeeds(userId) {
   
   xhttp.onreadystatechange = function() {
     if (xhttp.readyState === 4 && xhttp.status === 200) {     
-	 var obj = JSON.parse(xhttp.responseText);	  
-	 for (var i = 0; i < obj.length; i++) { 		  
-			// console.log(i + " -> " + obj[i]['tweetText']);	
-			var cp =  document.createElement('span');
+   var obj = JSON.parse(xhttp.responseText);    
+   for (var i = 0; i < obj.length; i++) {       
+      // console.log(i + " -> " + obj[i]['tweetText']); 
+      var cp =  document.createElement('span');
             cp.innerHTML = '<a href="http://localhost:8080/getUserFeeds/" + userId + "/">' +  obj[i]['UserName'] + '</a>' + 
             '&nbsp;&nbsp;&nbsp;' + obj[i]['lastupdated'] + '<br/>' + obj[i]['tweetText'] + '<br/>' +
-            '<a href="http://localhost:8080/getReplies/"' + obj[i]['tweetID'] + '"/">Replies</a>' + '<br/><br/>';
- 			document.getElementById("feeds").appendChild(cp);		
-	  } 
-	}
+            '<button id="replyBtn' +  obj[i]['tweetID'] + '" onclick="getReplies(' + obj[i]['tweetID'] + ')">Replies</button><br/><div id="replies' +  obj[i]['tweetID'] + '""></div><br/>';
+      document.getElementById("feeds").appendChild(cp); 
+      
+    } 
+  }
   };
   xhttp.open("GET", feedUrl, true);
   xhttp.send();
 }
- 
 
+function getReplies(tweetID) {
+  var xhttp = new XMLHttpRequest(tweetID);
+  var repliesURL= "http://localhost:8080/getReplies/" + tweetID + "/";
+
+  console.log("replies url " + repliesURL);
+  console.log("response  " + xhttp.responseText);
+
+  xhttp.onreadystatechange = function() {
+    if (xhttp.readyState === 4 && xhttp.status === 200) {     
+     var obj = JSON.parse(xhttp.responseText);
+     if(obj.length === 0 ) document.getElementById("replyBtn" + tweetID).style.display = "none";;   
+     for (var i = 0; i < obj.length; i++) {       
+      var cp =  document.createElement('span');
+      cp.innerHTML = obj[i]['LastUpdated'] + '&nbsp;&nbsp;&nbsp;' + obj[i]['ReplyText'] + '<br/>';
+      //console.log("reply span " + replySpan);
+      document.getElementById("replies" + tweetID).appendChild(cp); 
+    }
+    } 
+    areRepliesHidden(tweetID);
+  };
+
+  function areRepliesHidden(tweetID){
+    var replies = document.getElementById("replies" + tweetID);
+
+    if(replies.style.display == "block"){
+      replies.style.display = "none";
+      replies.innerHTML = "";
+    }
+    else{
+      document.getElementById("replies" + tweetID).style.display = "block";
+    }
+  }
+
+  xhttp.open("GET", repliesURL, true);
+  xhttp.send();
+
+        //document.getElementById("replies").innerHTML = replySpan;
+      //document.getElementById("replies").style.display = "block";
+}
+ 
 </script>
 </body>
 </html>
-
- 

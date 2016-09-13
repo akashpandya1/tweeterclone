@@ -66,10 +66,12 @@ function getUserFeeds(userId) {
 	 var obj = JSON.parse(xhttp.responseText);	  
 	 for (var i = 0; i < obj.length; i++) { 		  
 			// console.log(i + " -> " + obj[i]['tweetText']);	
-			var cp =  document.createElement('span');
-            cp.innerHTML = '<a href="http://localhost:8080/getUserFeeds/" + userId + "/">' +  obj[i]['UserName'] + '</a>' + 
+			var cp =  document.createElement('span');            
+            var userTweethref='http://localhost:8080/getUserTweets/' + obj[i]['authorID']  + '/';    
+            console.log("userTweethref  -> " + userTweethref);            
+            cp.innerHTML = '<a id="userTweets" onclick="window.open(\'' + userTweethref + '\', \'pop\', \'width=600,height=400\');"><u>' +  obj[i]['UserName'] + '</u></a>' + 
             '&nbsp;&nbsp;&nbsp;' + obj[i]['lastupdated'] + '<br/>' + obj[i]['tweetText'] + '<br/>' +
-            '<a href="http://localhost:8080/getReplies/"' + obj[i]['tweetID'] + '"/">Replies</a>' + '<br/><br/>';
+            '<a href="http://localhost:8080/getReplies/' + obj[i]['tweetID'] + '"/">Replies</a>' + '<br/><br/>';
  			document.getElementById("feeds").appendChild(cp);		
 	  } 
 	}
@@ -78,7 +80,6 @@ function getUserFeeds(userId) {
   xhttp.send();
 }
  
-
 </script>
 </body>
 </html>

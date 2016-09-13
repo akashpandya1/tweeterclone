@@ -11,7 +11,7 @@ var db = new TransactionDatabase(
 //updateAnyColumnWithExistingData("retweeter_userid", 3, 'user2');
 //updateAnyColumnWithExistingData("retweeter_userid", 4, 'user2');
 //updateAnyColumnWithExistingData("userlikeids", 5, 'user2');
-//selectRecForTweet(5);
+//selectUserTweets(1);
 //deleteRec(7);
 //selectUserFeeds(1);
 
@@ -118,23 +118,24 @@ function selectUserFeeds(userId) {
         });
 }
 
-function selectRecForTweet(idRec) {
+exports.selectUserTweets = selectUserTweets;
+function selectUserTweets(userid) {
     return new Promise(
         (resolve, reject) => {
-            db.all("SELECT * FROM tweet where tweetID = ?", idRec,
-                function (err, row) {
+            db.all("SELECT tweetID, tweetText, lastUpdated FROM tweet where authorID = ?", userid,
+                function (err, rows) {
                     if (err) {
                         console.log(err);
                         reject(err);
                         return false;
                     }
-                    resolve(row);
+                    resolve(rows);
                 });
         }).then(
-        (row) => {
-            console.log("tweet return rows: " + row);
-            var jsonrow = JSON.stringify(row);
-            console.log("tweet retun json: " + jsonrow);
+        (rows) => {
+            console.log("selectUserTweets: " + rows);
+            var jsonrow = JSON.stringify(rows);
+            console.log("selectUserTweets: " + jsonrow);
             return jsonrow;
         }
         ).catch(

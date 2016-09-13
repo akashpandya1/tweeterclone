@@ -8,7 +8,7 @@ var express = require('express'),
     addUser = fs.readFile('./user.html'),
     dbInsertTweet = require('./tweetdb.js').insertTweet,
     dbDeleteTweet = require('./tweetdb.js').deleteRec,
-    dbSelectRecForTweet = require('./tweetdb.js').selectRecForTweet,  
+    dbSelectUserTweets = require('./tweetdb.js').selectUserTweets,  
     dbAllTweets = require('./tweetdb.js').selectRec,
     dbAddUser = require('./userdb.js').addUser,
     dbSelectUserFeeds = require('./tweetdb.js').selectUserFeeds,
@@ -22,17 +22,7 @@ var express = require('express'),
     extended: true
 })); 
 
-/*
- for (var i = 0; i < obj.length; i++) { 
-		  
-			console.log(i + " -> " + obj[i]['tweetText']);	
-
-			var cp = document.createElement('span');
-			cp.innerHTML = obj[i]['date'] + "->"  + obj[i]['userID'] + "->" + obj[i]['tweet'] + "<br>";
-			document.getElementById("feeds").appendChild(cp);
-			
-	  }
-*/
+ 
 app.use(express.static('/public'));
 
  
@@ -84,6 +74,30 @@ app.get('/getUserFeeds/:userId', function(req, res) {
             (err) => {
             res.send(err);
         });       
+});
+
+
+app.get('/getUserTweets/:userId', function(req, res) {
+     var userid = req.params.userId
+     console.log("getUserTweets userid:" + userid);   
+     var p = dbSelectUserTweets(userid);
+     p.then(
+        (val) => {
+             fs.readFile('user.html', 'utf-8', function(err, content) {
+                if (err) {
+                    res.end('error occurred');
+                    return;
+                } 
+
+            var renderedHtml = ejs.render(content, {userTweets: val});
+            res.end(renderedHtml);  
+            }
+        ).catch(
+            (err) => {
+            res.send(err);
+        });     
+        
+    }); 
 });
 
 

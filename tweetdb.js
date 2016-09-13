@@ -107,9 +107,63 @@ function selectUserFeeds(userId) {
                 });
         }).then(
         (rows) => {
-            console.log("selectUserFeeds rows: " + rows);
+            //console.log("selectUserFeeds rows: " + rows);
             var jsonrows = JSON.stringify(rows);
-            console.log("selectUserFeeds json: " + jsonrows);
+            //console.log("selectUserFeeds json: " + jsonrows);
+            return jsonrows;
+        }
+        ).catch(
+        (err) => {
+            console.log(err);
+        });
+}
+
+exports.hasReplies = hasReplies;
+function hasReplies(tweetID) {
+    return new Promise(
+        (resolve, reject) => {          
+            db.all("COUNT (r.ReplyText) FROM Replies as r WHERE r.TweetID = ?", tweetID,
+                function (err, rows) {
+                    if (err) {
+                        console.log(err);
+                        reject(err);
+                        return false;
+                    }                    
+                    resolve(rows);
+                });
+        }).then(
+        (rows) => {
+            if(rows.count > 0){
+                return true;
+            }
+            else{
+                return false;
+            }
+        }
+        ).catch(
+        (err) => {
+            console.log(err);
+        });
+}
+
+exports.getReplies = getReplies;
+function getReplies(tweetID) {
+    return new Promise(
+        (resolve, reject) => {          
+            db.all("SELECT r.ReplyText, r.UserID, r.LastUpdated FROM Replies as r WHERE r.TweetID = ?", tweetID,
+                function (err, rows) {
+                    if (err) {
+                        console.log(err);
+                        reject(err);
+                        return false;
+                    }                    
+                    resolve(rows);
+                });
+        }).then(
+        (rows) => {
+            console.log("replies rows: " + rows);
+            var jsonrows = JSON.stringify(rows);
+            console.log("reply json: " + jsonrows);
             return jsonrows;
         }
         ).catch(

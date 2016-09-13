@@ -13,6 +13,7 @@ var express = require('express'),
     dbAddUser = require('./userdb.js').addUser,
     dbSelectUserFeeds = require('./tweetdb.js').selectUserFeeds,
     dbGetUserIDByName = require('./userdb.js').getUserIDByName,
+    dbGetReplies = require('./tweetdb.js').getReplies,
     bodyParser = require('body-parser');
     ejs = require('ejs');
     os = require('os');
@@ -77,6 +78,7 @@ app.get('/getUserFeeds/:userId', function(req, res) {
 });
 
 
+
 app.get('/getUserTweets/:userId', function(req, res) {
      var userid = req.params.userId
      console.log("getUserTweets userid:" + userid);   
@@ -91,14 +93,23 @@ app.get('/getUserTweets/:userId', function(req, res) {
 
             var renderedHtml = ejs.render(content, {userTweets: val});
             res.end(renderedHtml);  
-            }
+            });
+       });       
+});
+
+app.get('/getReplies/:tweetID', function(req, res) {
+     var tweetID = req.params.tweetID
+     console.log("tweetID:" + tweetID);   
+     var p = dbGetReplies(tweetID);
+     p.then(
+        (val) => {
+            res.send(val);
+          }
         ).catch(
             (err) => {
             res.send(err);
-        });     
-        
-    }); 
-});
+        });         
+}); 
 
 
 

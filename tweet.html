@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html>
 
 <head>
@@ -5,25 +6,79 @@
 </head>
 
 <body>
-    <h1>TwitterClone</h1>
+<h1>TwitterClone</h1>
 
+<div id="userlogin">  
+<h2>Login</h2>
+<input type="text"  placeholder="username" name="userid" id="userid" /> 
+<br/>    
+<br/>     
+<input type="password"  placeholder="password" name="password" id="password" />
+<br/>    
+<br/>     
+<input type="button" id="loginbutton" name="loginbutton"  value="Login" onclick="handleUser(event);"  onkeypress="if(event.keyCode === 13){handleUser(event);}" />
+<br/>    
+<br/>   
+</div>
+ 
+<div id="feeds" style="display:none;"><b>Userfeeds:</b><br/></div>
+
+<script>
+ var userInfo;
+
+ function handleUser(evt) {   
+        console.log('handleUser');
+        evt.preventDefault();           
+        userInfo = document.getElementById("userid").value;   
+        console.log('userInfo' + userInfo);  
+        document.getElementById("userlogin").style.display = 'none';
+        document.getElementById("feeds").style.display = '';
+        getUserFeeds(userInfo);
+ };
+
+
+ function callAjax(inputData) {
+    
+        //alert('callAjax inputData: ' + inputData);
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function() {
+            if (this.readyState === 4 && this.status === 200) {
+               // alert("this.responseText :" + this.responseText );
+                var data = JSON.parse(this.responseText);                              
+                document.getElementById("testDemo").innerHTML = this.responseText;
+            }
+        };
+        xhttp.open("GET", "http://www.omdbapi.com/?t="+inputData+ "&y=&plot=short&r=json", true);    
+        xhttp.send();
+        document.getElementById("testDemo").innerHTML = "waiting for response..."; 
   
-    <form action="/tweet" method="post">
-        <h2>Login</h2>
-             
-        <input type="text"  placeholder="username" name="userid" id="userid" /> 
-        <br/>    
-        <br/>     
-        <input type="password"  placeholder="password" name="password" id="password" />
-        <br/>    
-        <br/>     
-        <input type="submit" id="loginbutton" name="loginbutton"  value="Login"  />
-    </form>
+    }      
 
-    <form action="/user" method="post">   
-    <input type="submit" id="addUser" name="addUser"  value="Add User"  />
-    </form>
-   
+function getUserFeeds(userId) {
+  var xhttp = new XMLHttpRequest(userId);
+  var feedUrl= "http://localhost:8080/getUserFeeds/" + userId + "/";
+  
+  console.log(feedUrl);
+  console.log(xhttp.responseText);
+  
+  xhttp.onreadystatechange = function() {
+    if (xhttp.readyState === 4 && xhttp.status === 200) {     
+	 var obj = JSON.parse(xhttp.responseText);	  
+	 for (var i = 0; i < obj.length; i++) { 		  
+			// console.log(i + " -> " + obj[i]['tweetText']);	
+			var cp =  document.createElement('span');
+            cp.innerHTML = '<a href="http://localhost:8080/getUserFeeds/" + userId + "/">' +  obj[i]['UserName'] + '</a>' + '&nbsp;&nbsp;&nbsp;' + obj[i]['lastupdated'] + '<br/>' + obj[i]['tweetText'] + '<br/><br/>';
+ 			document.getElementById("feeds").appendChild(cp);		
+	  } 
+	}
+  };
+  xhttp.open("GET", feedUrl, true);
+  xhttp.send();
+}
+ 
+
+</script>
 </body>
-
 </html>
+
+ 

@@ -1,5 +1,5 @@
 var express = require('express'),
-    app = express(),
+    app = express();
     sqlite3 = require('sqlite3').verbose(),
     db = new sqlite3.Database('test.db'),
     fs = require('fs'),
@@ -11,6 +11,7 @@ var express = require('express'),
     dbSelectRecForTweet = require('./tweetdb.js').selectRecForTweet,  
     dbAllTweets = require('./tweetdb.js').selectRec,
     dbAddUser = require('./userdb.js').addUser,
+    dbSelectUserFeeds = require('./tweetdb.js').selectUserFeeds,
     dbGetUserIDByName = require('./userdb.js').getUserIDByName,
     bodyParser = require('body-parser');
     ejs = require('ejs');
@@ -19,8 +20,22 @@ var express = require('express'),
     app.use(bodyParser.json());
     app.use(bodyParser.urlencoded({
     extended: true
-}));
+})); 
 
+/*
+ for (var i = 0; i < obj.length; i++) { 
+		  
+			console.log(i + " -> " + obj[i]['tweetText']);	
+
+			var cp = document.createElement('span');
+			cp.innerHTML = obj[i]['date'] + "->"  + obj[i]['userID'] + "->" + obj[i]['tweet'] + "<br>";
+			document.getElementById("feeds").appendChild(cp);
+			
+	  }
+*/
+app.use(express.static('/public'));
+
+ 
 app.post('/tweet', function (req, res) {
     console.log("tweet");
     var user = {
@@ -56,9 +71,25 @@ app.post('/user', function(req, res) {
    });  
 });
 
+ 
+app.get('/getUserFeeds/:userId', function(req, res) {
+     var useid = req.params.userId
+     console.log("userid:" + useid);   
+     var p = dbSelectUserFeeds(useid);
+     p.then(
+        (val) => {
+            res.send(val);
+            }
+        ).catch(
+            (err) => {
+            res.send(err);
+        });       
+});
+
+
+
 app.post('/addUser', function(req, res) {
-    console.log("adding user");
-     
+    console.log("adding user");     
      var newUser = {
          UserName: req.body.userName,
          UserProfile: req.body.userProfile        
@@ -152,12 +183,14 @@ app.post('/selectRecForTweet', function (req, res) {
         });
 });
 
-app.get('/', function (req, res) {
+ app.get('/', function (req, res) {
     res.send(html);
 
-});
+});  
 
 
 app.listen(8080, function () {
     console.log('Example app listening on port 8080!');
 });
+
+ 

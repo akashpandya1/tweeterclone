@@ -13,6 +13,7 @@ var db = new TransactionDatabase(
 //updateAnyColumnWithExistingData("userlikeids", 5, 'user2');
 //selectRecForTweet(5);
 //deleteRec(7);
+//selectUserFeeds(1);
 
 function updateTweetwithColumn(column, id, data) {
     db.run("UPDATE tweet SET " + column + "  = ? WHERE tweetid = ?", data, id, function (err) {
@@ -82,6 +83,33 @@ function selectRec() {
             console.log("tweet return rows: " + rows);
             var jsonrows = JSON.stringify(rows);
             console.log("tweet retun json: " + jsonrows);
+            return jsonrows;
+        }
+        ).catch(
+        (err) => {
+            console.log(err);
+        });
+}
+
+
+exports.selectUserFeeds =selectUserFeeds;
+function selectUserFeeds(userId) {
+    return new Promise(
+        (resolve, reject) => {          
+            db.all("SELECT t.tweettext, t.authorID, t.lastupdated, u.username FROM tweet as t, user as u where u.userID = t.authorID and authorID in ( select userfollowing from userfollow where userid = ? )", userId,
+                function (err, rows) {
+                    if (err) {
+                        console.log(err);
+                        reject(err);
+                        return false;
+                    }                    
+                    resolve(rows);
+                });
+        }).then(
+        (rows) => {
+            console.log("selectUserFeeds rows: " + rows);
+            var jsonrows = JSON.stringify(rows);
+            console.log("selectUserFeeds json: " + jsonrows);
             return jsonrows;
         }
         ).catch(

@@ -79,8 +79,8 @@ app.get('/getUserFeeds/:userId', function(req, res) {
 
 
 
-app.get('/getUserTweets/:userId', function(req, res) {
-     var userid = req.params.userId
+app.get('/getUserTweets/:userId/', function(req, res) {
+     var userid = req.params.userId;     
      console.log("getUserTweets userid:" + userid);   
      var p = dbSelectUserTweets(userid);
      p.then(

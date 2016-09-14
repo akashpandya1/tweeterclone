@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+
+<head>
+    <title>TwitterClone</title>
+</head>
+
+<body>
+    <h1>TwitterClone</h1>
+    <h2 id="userHead">Loading...</h2>
+    <br/>
+    <br/>
+    <div id="userTweets"></div>
+
+    <script>
+         var tweets = <%- JSON.parse(userTweets) %>;
+         var userName= tweets[0]['UserName'];
+         for (var i = 0; i < tweets.length; i++) {            
+             var cp =  document.createElement('span');
+             cp.innerHTML =  tweets[i]['tweetText'] + '&nbsp;&nbsp;&nbsp;' +  tweets[i]['lastupdated'] + '<br/>' ;                 
+             if (i % 2 != 0) {
+                 cp.style['background-color'] = '#d3d3d3';
+             } 
+             document.getElementById("userTweets").appendChild(cp);
+        }          
+         document.getElementById("userHead").innerHTML='Tweets for ' + userName + ':';
+      </script>
+    <br/>
+    <br/>
+    <input type="button" id="Close" name="Close" value="Close" onclick="window.close();" onkeypress="if(event.keyCode === 13){window.close();}"
+    />
+
+
+</body>
+
+</html>

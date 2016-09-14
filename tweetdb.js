@@ -96,7 +96,7 @@ exports.selectUserFeeds =selectUserFeeds;
 function selectUserFeeds(userId) {
     return new Promise(
         (resolve, reject) => {          
-            db.all("SELECT t.tweetID, t.tweettext, t.authorID, t.lastupdated, u.username FROM tweet as t, user as u where u.userID = t.authorID and authorID in ( select userfollowing from userfollow where userid = ? )", userId,
+            db.all("SELECT t.tweetID, t.tweettext, t.authorID, t.lastupdated, u.username FROM tweet as t, user as u where u.userID = t.authorID and authorID in ( select userfollowing from userfollow where userid = ? ) order by t.lastUpdated desc", userId,
                 function (err, rows) {
                     if (err) {
                         console.log(err);
@@ -176,7 +176,7 @@ exports.selectUserTweets = selectUserTweets;
 function selectUserTweets(userid) {
     return new Promise(
         (resolve, reject) => {
-            db.all("SELECT tweetID, tweetText, lastUpdated FROM tweet where authorID = ?", userid,
+            db.all("SELECT u.userName, t.authorID, t.tweetID, t.tweetText, t.lastUpdated FROM tweet as t, user as u where u.userID = t.authorID and t.authorID = ? order by t.lastUpdated desc", userid,
                 function (err, rows) {
                     if (err) {
                         console.log(err);

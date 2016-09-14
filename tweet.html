@@ -2,28 +2,30 @@
 <html>
 
 <head>
-    <title>TwitterClone</title>
+  <title>TwitterClone</title>
 </head>
 
 <body>
-<h1>TwitterClone</h1>
+  <h1>TwitterClone</h1>
 
-<div id="userlogin">  
-<h2>Login</h2>
-<input type="text"  placeholder="username" name="userid" id="userid" /> 
-<br/>    
-<br/>     
-<input type="password"  placeholder="password" name="password" id="password" />
-<br/>    
-<br/>     
-<input type="button" id="loginbutton" name="loginbutton"  value="Login" onclick="handleUser(event);"  onkeypress="if(event.keyCode === 13){handleUser(event);}" />
-<br/>    
-<br/>   
-</div>
- 
-<div id="feeds" style="display:none;"><h3>Userfeeds:</h3><br/></div>
+  <div id="userlogin">
+    <h2>Login</h2>
+    <input type="text" placeholder="username" name="userid" id="userid" />
+    <br/>
+    <br/>
+    <input type="password" placeholder="password" name="password" id="password" />
+    <br/>
+    <br/>
+    <input type="button" id="loginbutton" name="loginbutton" value="Login" onclick="handleUser(event);" onkeypress="if(event.keyCode === 13){handleUser(event);}"
+    />
+    <br/>
+    <br/>
+  </div>
 
-<script>
+  <div id="feeds" style="display:none;">
+    <h3>Userfeeds:</h3><br/></div>
+
+  <script>
  var userInfo;
  function handleUser(evt) {   
         console.log('handleUser');
@@ -43,15 +45,14 @@ function getUserFeeds(userId) {
   console.log(xhttp.responseText);
   
   xhttp.onreadystatechange = function() {
-    if (xhttp.readyState === 4 && xhttp.status === 200) {     
- 
-	 var obj = JSON.parse(xhttp.responseText);	  
+ if (xhttp.readyState === 4 && xhttp.status === 200) { 
+	 var obj = JSON.parse(xhttp.responseText);   	  
 	 for (var i = 0; i < obj.length; i++) { 		  
 			// console.log(i + " -> " + obj[i]['tweetText']);	
 			var cp =  document.createElement('span');            
             var userTweethref='http://localhost:8080/getUserTweets/' + obj[i]['authorID']  + '/';    
             console.log("userTweethref  -> " + userTweethref);            
-            cp.innerHTML = '<a id="userTweets" onclick="window.open(\'' + userTweethref + '\', \'pop\', \'width=600,height=400\');"><u>' +  obj[i]['UserName'] + '</u></a>' + 
+            cp.innerHTML = '<a id="userTweets" onclick="window.open(\'' + userTweethref + '\', \'pop\', \'top=50,left=500,width=400,height=600,resizable=1,scrollbars=1,titlebar=1\');"><u>' +  obj[i]['UserName'] + '</u></a>' + 
             '&nbsp;&nbsp;&nbsp;' + obj[i]['lastupdated'] + '<br/>' + obj[i]['tweetText'] + '<br/>' +
             '<button id="replyBtn' +  obj[i]['tweetID'] + '" onclick="getReplies(' + obj[i]['tweetID'] + ')">Replies</button><br/><div id="replies' +  obj[i]['tweetID'] + '""></div><br/>';
  			document.getElementById("feeds").appendChild(cp);		
@@ -99,10 +100,9 @@ function getReplies(tweetID) {
   xhttp.open("GET", repliesURL, true);
   xhttp.send();
 
-        //document.getElementById("replies").innerHTML = replySpan;
-      //document.getElementById("replies").style.display = "block";
 }
 
 </script>
 </body>
+
 </html>

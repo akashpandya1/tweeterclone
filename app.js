@@ -92,7 +92,7 @@ app.get('/getUserTweets/:userId/', function(req, res) {
                     return;
                 } 
              var JSONStr = JSON.stringify(val);   
-             console.log("getUserTweets :" + JSONStr);  
+             //console.log("getUserTweets :" + JSONStr);  
             var renderedHtml = ejs.render(content, {userTweets: JSONStr});
             res.end(renderedHtml);  
             });

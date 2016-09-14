@@ -28,7 +28,7 @@
     <input type="button" id="tweetbutton" name="tweetbutton" value="Show My Tweets" onclick="getUserTweetsData();" onkeypress="if(event.keyCode === 13){getUserTweetsData();}"/>
     <br/> 
     <br/> 
-    <input type="text" maxlength="140" size="100" placeholder="tweet here..." name="tweetData" id="tweetData" />
+    <input type="text" maxlength="140" size="100" placeholder="tweet here..." name="tweetData" id="tweetData" onkeypress="if(event.keyCode === 13){handleTweet(event);}"/>
     <br/>
     <input type="button" id="tweetbutton" name="tweetbutton" value="Tweet" onclick="handleTweet(event);" onkeypress="if(event.keyCode === 13){handleTweet(event);}"/>&nbsp;&nbsp;<div id="tweetAlert"></div>
       <br/>
@@ -49,7 +49,8 @@
         console.log('tweetText:' + tweetText);  
         document.getElementById("tweetData").value = '';         
         createNewTweet(tweetText);
-        document.getElementById("tweetAlert").innerHTML = 'Tweeted!';   
+        document.getElementById("tweetAlert").innerHTML = 'Tweeted!';  
+        document.getElementById("tweetAlert").style['color'] = 'green'; 
         setTimeout(fade_out, 2000);      
  };
 

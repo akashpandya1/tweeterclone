@@ -129,20 +129,16 @@ function hasReplies(tweetID) {
                         reject(err);
                         return false;
                     }        
-                     console.log(rows['replyCount']);
                     var jsonrows = JSON.stringify(rows);
-                    var rows = JSON.parse(jsonrows)[0]['replyCount']
-                    console.log("rows " + rows);           
+                    var rows = JSON.parse(jsonrows)[0]['replyCount'];     
                     resolve(rows);
                 });
         }).then(
         (rows) => {
             if(rows > 0){
-                console.log("true");
                 return true;
             }
             else{
-                console.log("false");
                 return false;
             }
         }
@@ -167,9 +163,7 @@ function getReplies(tweetID) {
                 });
         }).then(
         (rows) => {
-            console.log("replies rows: " + rows);
             var jsonrows = JSON.stringify(rows);
-            console.log("reply json: " + jsonrows);
             return jsonrows;
         }
         ).catch(
@@ -193,9 +187,9 @@ function selectUserTweets(userid) {
                 });
         }).then(
         (rows) => {
-            console.log("selectUserTweets: " + rows);
+           // console.log("selectUserTweets: " + rows);
             var jsonrow = JSON.stringify(rows);
-            console.log("selectUserTweets: " + jsonrow);
+            //console.log("selectUserTweets: " + jsonrow);
             return jsonrow;
         }
         ).catch(

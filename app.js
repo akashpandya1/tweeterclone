@@ -101,12 +101,10 @@ app.get('/getUserTweets/:userId/', function(req, res) {
 
 
 app.get('/hasReplies/:tweetID', function(req, res) {
-     var tweetID = req.params.tweetID
-     console.log("has tweet tweetID:" + tweetID);   
+     var tweetID = req.params.tweetID   
      var p = dbHasReplies(tweetID);
      p.then(
         (val) => {
-            console.log("val " + val);
             res.send(val);
           }
         ).catch(
@@ -116,8 +114,7 @@ app.get('/hasReplies/:tweetID', function(req, res) {
 }); 
 
 app.get('/getReplies/:tweetID', function(req, res) {
-     var tweetID = req.params.tweetID
-     console.log("tweetID:" + tweetID);   
+     var tweetID = req.params.tweetID  
      var p = dbGetReplies(tweetID);
      p.then(
         (val) => {

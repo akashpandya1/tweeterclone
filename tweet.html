@@ -3,8 +3,6 @@
 
 <head>
   <title>TwitterClone</title>
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
-  <script src="http://code.jquery.com/ui/1.9.2/jquery-ui.js"></script>
 </head>
 
 <body>
@@ -25,35 +23,9 @@
   </div>
 
   <div id="feeds" style="display:none;">
-    <input type="button" id="tweetbutton" name="tweetbutton" value="Show My Tweets" onclick="getUserTweetsData();" onkeypress="if(event.keyCode === 13){getUserTweetsData();}"/>
-    <br/> 
-    <br/> 
-    <input type="text" maxlength="140" size="100" placeholder="tweet here..." name="tweetData" id="tweetData" onkeypress="if(event.keyCode === 13){handleTweet(event);}"/>
-    <br/>
-    <input type="button" id="tweetbutton" name="tweetbutton" value="Tweet" onclick="handleTweet(event);" onkeypress="if(event.keyCode === 13){handleTweet(event);}"/>&nbsp;&nbsp;<div id="tweetAlert"></div>
-      <br/>
-    <br/>
-    <h3>Userfeeds:</h3><br/>
-  </div>
+    <h3>Userfeeds:</h3><br/></div>
 
   <script>
-
-  function fade_out() {
-    $("#tweetAlert").fadeOut().empty();
-  }
-
- function handleTweet(evt) {   
-        console.log('handleTweet');
-        evt.preventDefault();           
-        var tweetText = document.getElementById("tweetData").value;   
-        console.log('tweetText:' + tweetText);  
-        document.getElementById("tweetData").value = '';         
-        createNewTweet(tweetText);
-        document.getElementById("tweetAlert").innerHTML = 'Tweeted!';  
-        document.getElementById("tweetAlert").style['color'] = 'green'; 
-        setTimeout(fade_out, 2000);      
- };
-
  var userInfo;
  function handleUser(evt) {   
         console.log('handleUser');
@@ -64,26 +36,9 @@
         document.getElementById("feeds").style.display = '';
         getUserFeeds(userInfo);
  };
-
-
- function createNewTweet(tweetData) {
-  var xhttp = new XMLHttpRequest();
-  var tweetUrl= "http://localhost:8080/createtweet/" + tweetData + "/"  + userInfo + "/";  
-  console.log('tweetUrl:' + tweetUrl);
-  console.log(xhttp.responseText); 
-  xhttp.open("GET", tweetUrl, true);
-  xhttp.send();
-}
-
-function getUserTweetsData() {
-   var userTweethref='http://localhost:8080/getUserTweets/' + userInfo  + '/';    
-   console.log("userTweethref  -> " + userTweethref);            
-   window.open(userTweethref, 'pop', 'top=50,left=500,width=400,height=600,resizable=1,scrollbars=1,titlebar=1');
-}
-
   
 function getUserFeeds(userId) {
-  var xhttp = new XMLHttpRequest();
+  var xhttp = new XMLHttpRequest(userId);
   var feedUrl= "http://localhost:8080/getUserFeeds/" + userId + "/";
   
   console.log(feedUrl);
@@ -121,7 +76,6 @@ function hasReplies(tweetID) {
 
   xhttp.onreadystatechange = function() {
         if (xhttp.readyState === 4 && xhttp.status === 200) {
-          console.log("hasReplies return " + xhttp.responseText);
           if(xhttp.responseText == "false") document.getElementById("replyBtn" + tweetID).style.display = "none";
         }
     } 
@@ -133,10 +87,7 @@ function hasReplies(tweetID) {
 function getReplies(tweetID) {
   var xhttp = new XMLHttpRequest(tweetID);
   var repliesURL= "http://localhost:8080/getReplies/" + tweetID + "/";
-
-  console.log("replies url " + repliesURL);
-  console.log("response  " + xhttp.responseText);
-
+  
   xhttp.onreadystatechange = function() {
     if (xhttp.readyState === 4 && xhttp.status === 200) {     
      var obj = JSON.parse(xhttp.responseText);

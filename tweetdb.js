@@ -29,18 +29,18 @@ function updateTweetwithColumn(column, id, data) {
     });
 }
 
-function insertTweet(data) {
+function insertTweet(jsonStr) {
     var stmt = db.prepare("INSERT INTO tweet (tweetText, authorID) VALUES (?, ?)", function (err) {
         if (err) {
             console.log(err);
             return false;
         }
         else {
-            console.log("data: " + data);
-            var jsonStr = JSON.parse(data);
-            stmt.run(jsonStr[0].tweetText, jsonStr[0].authorID);
-            stmt.finalize();
-            console.log("jsonStr: " + jsonStr[0].tweetText + "," + jsonStr[0].authorID);
+            console.log("insertTweet jsonStr: " + jsonStr);
+            var jsonObj = JSON.parse(jsonStr);
+            console.log("insertTweet jsonObj: " + jsonObj[0].tweetText + "," + jsonObj[0].authorID);
+            stmt.run(jsonObj[0].tweetText, jsonObj[0].authorID);
+            stmt.finalize();           
         }
     });
     return true;

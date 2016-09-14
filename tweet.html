@@ -28,7 +28,7 @@
     <input type="button" id="tweetbutton" name="tweetbutton" value="Show My Tweets" onclick="getUserTweetsData();" onkeypress="if(event.keyCode === 13){getUserTweetsData();}"/>
     <br/> 
     <br/> 
-    <input type="text" maxlength="140" size="100" placeholder="tweet here..." name="tweetData" id="tweetData" />
+    <input type="text" maxlength="140" size="100" placeholder="tweet here..." name="tweetData" id="tweetData"  onkeypress="if(event.keyCode === 13){handleTweet(event);}"/>
     <br/>
     <input type="button" id="tweetbutton" name="tweetbutton" value="Tweet" onclick="handleTweet(event);" onkeypress="if(event.keyCode === 13){handleTweet(event);}"/>&nbsp;&nbsp;<div id="tweetAlert"></div>
       <br/>
@@ -49,7 +49,8 @@
         console.log('tweetText:' + tweetText);  
         document.getElementById("tweetData").value = '';         
         createNewTweet(tweetText);
-        document.getElementById("tweetAlert").innerHTML = 'Tweeted!';   
+        document.getElementById("tweetAlert").innerHTML = 'Tweeted!';  
+        document.getElementById("tweetAlert").style['color'] = 'green'; 
         setTimeout(fade_out, 2000);      
  };
 
@@ -102,7 +103,9 @@ function getUserFeeds(userId) {
  		     if (i % 2 != 0) {
                  cp.style['background-color'] = '#d3d3d3';
          } 
-       	document.getElementById("feeds").appendChild(cp);		
+       	document.getElementById("feeds").appendChild(cp);	
+        cp = null;
+        hasReplies(obj[i]['tweetID']);	
 	  } 
 	} 
   };
@@ -111,13 +114,24 @@ function getUserFeeds(userId) {
 }
 
 
+function hasReplies(tweetID) {
+  var xhttp = new XMLHttpRequest(tweetID);
+  var repliesURL= "http://localhost:8080/hasReplies/" + tweetID + "/";
+
+  xhttp.onreadystatechange = function() {
+        if (xhttp.readyState === 4 && xhttp.status === 200) {
+          if(xhttp.responseText == "false") document.getElementById("replyBtn" + tweetID).style.display = "none";
+        }
+    } 
+      xhttp.open("GET", repliesURL, true);
+      xhttp.send();
+  };
+
+
 function getReplies(tweetID) {
   var xhttp = new XMLHttpRequest(tweetID);
   var repliesURL= "http://localhost:8080/getReplies/" + tweetID + "/";
-
-  console.log("replies url " + repliesURL);
-  console.log("response  " + xhttp.responseText);
-
+  
   xhttp.onreadystatechange = function() {
     if (xhttp.readyState === 4 && xhttp.status === 200) {     
      var obj = JSON.parse(xhttp.responseText);

@@ -23,9 +23,27 @@
   </div>
 
   <div id="feeds" style="display:none;">
-    <h3>Userfeeds:</h3><br/></div>
+    <input type="text" maxlength="140" size="100" placeholder="tweet here..." name="tweetData" id="tweetData" />
+    <br/>    
+    <input type="button" id="tweetbutton" name="tweetbutton" value="Tweet" onclick="handleTweet(event);" onkeypress="if(event.keyCode === 13){handleTweet(event);}" />
+    &nbsp;&nbsp;<div id="tweetAlert"></div>
+    <br/>
+    <br/>
+    <h3>Userfeeds:</h3><br/>    
+  </div>
 
   <script>
+
+ function handleTweet(evt) {   
+        console.log('handleTweet');
+        evt.preventDefault();           
+        var tweetText = document.getElementById("tweetData").value;   
+        console.log('tweetText:' + tweetText);  
+        document.getElementById("tweetData").value = '';         
+        createNewTweet(tweetText);
+         document.getElementById("tweetAlert").innerHTML = 'Tweeted!';         
+ };
+
  var userInfo;
  function handleUser(evt) {   
         console.log('handleUser');
@@ -36,9 +54,20 @@
         document.getElementById("feeds").style.display = '';
         getUserFeeds(userInfo);
  };
+
+
+ function createNewTweet(tweetData) {
+  var xhttp = new XMLHttpRequest();
+  var tweetUrl= "http://localhost:8080/createtweet/" + tweetData + "/"  + userInfo + "/";  
+  console.log('tweetUrl:' + tweetUrl);
+  console.log(xhttp.responseText); 
+  xhttp.open("GET", tweetUrl, true);
+  xhttp.send();
+}
+
   
 function getUserFeeds(userId) {
-  var xhttp = new XMLHttpRequest(userId);
+  var xhttp = new XMLHttpRequest();
   var feedUrl= "http://localhost:8080/getUserFeeds/" + userId + "/";
   
   console.log(feedUrl);

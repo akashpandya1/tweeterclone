@@ -124,31 +124,19 @@ app.post('/addUser', function(req, res) {
     dbAddUser(jSONStr);
     res.send('user added');        
 });
-
-app.post('/createtweet', function (req, res) {
-    console.log("createtweet");
-
-    return new Promise(
-        (resolve, reject) => {
-                var id = dbGetUserIDByName(req.body.userid);
-                resolve(id);
-            ;
-        }).then(
-        (id) => {
-            var createTweet = {
-        tweetText: req.body.tweettext,
-        authorID: id,
+ 
+app.get('/createtweet/:tweetData/:userInfo/', function (req, res) {
+    var tweetData = req.params.tweetData;
+    var userInfo = req.params.userInfo;
+    var createTweet = {
+        tweetText:  req.params.tweetData,
+        authorID:  req.params.userInfo        
     };
-    console.log("createtweet:" + createTweet.userid + "," + createTweet.tweettext);
+    console.log("createtweet:" + createTweet.tweetText + "," + createTweet.authorID);
     jSONStr = '[' + JSON.stringify(createTweet) + ']';
     console.log("jSONStr: " + jSONStr);
     dbInsertTweet(jSONStr);
-    res.send('Tweeted!');
-        }
-        ).catch(
-        (err) => {
-            console.log(err);
-        });  
+    res.end();        
 });
 
 app.post('/deletetweet', function (req, res) {

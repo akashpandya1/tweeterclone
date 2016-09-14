@@ -14,6 +14,7 @@ var express = require('express'),
     dbSelectUserFeeds = require('./tweetdb.js').selectUserFeeds,
     dbGetUserIDByName = require('./userdb.js').getUserIDByName,
     dbGetReplies = require('./tweetdb.js').getReplies,
+    dbHasReplies = require('./tweetdb.js').hasReplies,
     bodyParser = require('body-parser');
     ejs = require('ejs');
     os = require('os');
@@ -97,6 +98,22 @@ app.get('/getUserTweets/:userId/', function(req, res) {
             });
        });       
 });
+
+
+app.get('/hasReplies/:tweetID', function(req, res) {
+     var tweetID = req.params.tweetID
+     console.log("has tweet tweetID:" + tweetID);   
+     var p = dbHasReplies(tweetID);
+     p.then(
+        (val) => {
+            console.log("val " + val);
+            res.send(val);
+          }
+        ).catch(
+            (err) => {
+            res.send(err);
+        });         
+}); 
 
 app.get('/getReplies/:tweetID', function(req, res) {
      var tweetID = req.params.tweetID

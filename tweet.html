@@ -58,13 +58,31 @@ function getUserFeeds(userId) {
  		     if (i % 2 != 0) {
                  cp.style['background-color'] = '#d3d3d3';
          } 
-       	document.getElementById("feeds").appendChild(cp);		
+         
+       	document.getElementById("feeds").appendChild(cp);
+        cp = null;		
+        hasReplies(obj[i]['tweetID']);
 	  } 
 	} 
   };
   xhttp.open("GET", feedUrl, true);
   xhttp.send();
 }
+
+
+function hasReplies(tweetID) {
+  var xhttp = new XMLHttpRequest(tweetID);
+  var repliesURL= "http://localhost:8080/hasReplies/" + tweetID + "/";
+
+  xhttp.onreadystatechange = function() {
+        if (xhttp.readyState === 4 && xhttp.status === 200) {
+          console.log("hasReplies return " + xhttp.responseText);
+          if(xhttp.responseText == "false") document.getElementById("replyBtn" + tweetID).style.display = "none";
+        }
+    } 
+      xhttp.open("GET", repliesURL, true);
+      xhttp.send();
+  };
 
 
 function getReplies(tweetID) {

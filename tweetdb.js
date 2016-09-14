@@ -122,21 +122,27 @@ exports.hasReplies = hasReplies;
 function hasReplies(tweetID) {
     return new Promise(
         (resolve, reject) => {          
-            db.all("COUNT (r.ReplyText) FROM Replies as r WHERE r.TweetID = ?", tweetID,
+            db.all("SELECT COUNT(*) as replyCount FROM Replies as r WHERE r.TweetID = ?", tweetID,
                 function (err, rows) {
                     if (err) {
                         console.log(err);
                         reject(err);
                         return false;
-                    }                    
+                    }        
+                     console.log(rows['replyCount']);
+                    var jsonrows = JSON.stringify(rows);
+                    var rows = JSON.parse(jsonrows)[0]['replyCount']
+                    console.log("rows " + rows);           
                     resolve(rows);
                 });
         }).then(
         (rows) => {
-            if(rows.count > 0){
+            if(rows > 0){
+                console.log("true");
                 return true;
             }
             else{
+                console.log("false");
                 return false;
             }
         }

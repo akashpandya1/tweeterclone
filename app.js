@@ -86,12 +86,16 @@ app.get('/getUserTweets/:userId/', function(req, res) {
      p.then(
         (val) => {
              fs.readFile('user.html', 'utf-8', function(err, content) {
+             fs.readFile('userTweet.html', 'utf-8', function(err, content) {
                 if (err) {
                     res.end('error occurred');
                     return;
                 } 
 
             var renderedHtml = ejs.render(content, {userTweets: val});
+             var JSONStr = JSON.stringify(val);   
+             console.log("getUserTweets :" + JSONStr);  
+            var renderedHtml = ejs.render(content, {userTweets: JSONStr});
             res.end(renderedHtml);  
             });
        });       
